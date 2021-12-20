@@ -1,15 +1,19 @@
 import sys
+import PyQt5
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import *
-
-
+import random 
+def rand_color():
+    col=["red","blue","black","orange","white","violet"]
+    s=random.randint(0,5)
+    return col[s]
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.browser = QWebEngineView()
-        self.setWindowIcon(QIcon("hrithik.ico"))
+        self.setWindowIcon(QIcon("gui.ico"))
         self.browser.setUrl(QUrl('http://google.com'))
         self.setCentralWidget(self.browser)
         self.showMaximized()
@@ -17,7 +21,7 @@ class MainWindow(QMainWindow):
         # navbar
         navbar = QToolBar()
         self.addToolBar(navbar)
-        navbar.setStyleSheet("background-color: black;color:yellow;")
+        navbar.setStyleSheet("color:yellow;font:bold 14px;")
         back_btn = QAction('Back', self)
         back_btn.triggered.connect(self.browser.back)
         navbar.addAction(back_btn)
@@ -30,13 +34,17 @@ class MainWindow(QMainWindow):
         reload_btn.triggered.connect(self.browser.reload)
         navbar.addAction(reload_btn)
 
-        home_btn = QAction('Home', self)
+        home_btn = QAction('Qutoes', self)
         home_btn.triggered.connect(self.navigate_home)
         navbar.addAction(home_btn)
 
-        change_btn=QAction("change",self)
-        change_btn.triggered.connect(self.color_change)
-        navbar.addAction(change_btn)
+        starting_part=QAction("Start",self)
+        starting_part.triggered.connect(self.navigate_start)
+        navbar.addAction(starting_part)
+       
+        colors=QAction("change_bgcolor",self)
+        colors.triggered.connect(lambda:self.change_color(rand_color()))
+        navbar.addAction(colors)
 
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
@@ -46,18 +54,21 @@ class MainWindow(QMainWindow):
 
     def navigate_home(self):
         self.browser.setUrl(QUrl('https://hrithikpaul-qutoes.herokuapp.com/'))
+    def navigate_start(self):
+        self.browser.setUrl(QUrl('https://google.com/'))
 
     def navigate_to_url(self):
         url = self.url_bar.text()
         self.browser.setUrl(QUrl(url))
 
-    def color_change(self):
-        self.browser.setStyleSheet("background-color:green;color:white;")
     def update_url(self, q):
         self.url_bar.setText(q.toString())
+    def change_color(self,color):
+        self.setStyleSheet(f"background-color:{color};")
+
 
 
 app = QApplication(sys.argv)
-QApplication.setApplicationName('Hrithik browser')
+QApplication.setApplicationName('GUI browser')
 window = MainWindow()
 app.exec_() 
